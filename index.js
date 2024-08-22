@@ -68,9 +68,18 @@ const saveToDB = (key,data)=>{
 
 addTaskButton.addEventListener("click",addTask);
 
-darkThemeToggleElement.addEventListener("click",()=>{
-    appElement.classList.toggle("App--isDark")
-});
+const toggleDarkMode = ()=>{
+    appElement.classList.toggle("App--isDark");
+    saveToDB("darkModeFlag",appElement.classList.contains("App--isDark"))
+
+}
+
+darkThemeToggleElement.addEventListener("click",toggleDarkMode);
 
 
-localStorage.clear()
+
+const initDataOnStartup =()=>{
+    fetchData("darkModeFlag")&&toggleDarkMode();
+}
+
+initDataOnStartup();
