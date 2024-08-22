@@ -42,8 +42,7 @@ const addTask = (e)=>{
     const tasks = fetchData("tasks") || [];
     tasks.push(task);
     saveToDB("tasks",tasks);
-    renderTasks(tasks);
-    initTaskListeners();  
+    initTaskList(tasks); 
 }
 
 const deleteTask = (e,index)=>{
@@ -53,7 +52,7 @@ const deleteTask = (e,index)=>{
     const tasks = fetchData("tasks")
     tasks.splice(index,1);
     saveToDB("tasks",tasks);
-    renderTasks(tasks)
+    initTaskList(tasks)
 }
 const initTaskListeners = ()=>{
     getDeleteIcons().forEach((icon,index)=>{
@@ -80,6 +79,12 @@ darkThemeToggleElement.addEventListener("click",toggleDarkMode);
 
 const initDataOnStartup =()=>{
     fetchData("darkModeFlag")&&toggleDarkMode();
+    initTaskList(fetchData("tasks"))
+}
+
+const initTaskList = (tasks)=>{
+    renderTasks(tasks);
+    initTaskListeners();
 }
 
 initDataOnStartup();
