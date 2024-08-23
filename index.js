@@ -1,5 +1,5 @@
 import 
-    {darkThemeToggleElement,appElement,inputElement,taskListElement,addTaskButton , getDeleteIcons} 
+    {darkThemeToggleElement,appElement,inputElement,taskListElement,addTaskButton , getDeleteIcons, getCheckbox, taskListLink} 
         from './scripts/elements'
 
 const fetchData = (key)=>{
@@ -58,6 +58,13 @@ const initTaskListeners = ()=>{
     getDeleteIcons().forEach((icon,index)=>{
         icon.addEventListener("click",(e)=>deleteTask(e,index))
     })
+
+    getCheckbox().forEach((box,index)=>{
+      box.addEventListener("click",(e)=>toggleTask(e,index))
+      box.addEventListener("keydown",(e)=>{
+        e.key === "Enter" && toggleTask(e,index)
+      })
+    })
 }
 
 
@@ -75,6 +82,13 @@ const toggleDarkMode = ()=>{
 
 darkThemeToggleElement.addEventListener("click",toggleDarkMode);
 
+const toggleTask = (e,index)=>{
+  const tasks = fetchData("tasks")
+
+  e.currentTarget.parentElement.classList.toggle("TaskList__taskContent--isActive");
+  tasks[index].isCompleted = !tasks[index].isCompleted;
+  saveToDB("tasks",tasks)
+}
 
 
 const initDataOnStartup =()=>{
@@ -82,9 +96,24 @@ const initDataOnStartup =()=>{
     initTaskList(fetchData("tasks"))
 }
 
+const renderEmptyState = ()=>{
+    taskListElement.innerHTML = `<li class='EmptyList'>
+      <img class='EmptyList__img' src="./assets/icon-empty.svg" alt="list is empty" />
+      <p>قائمة المهام فارغة</p>
+    </li>`;
+}
+
 const initTaskList = (tasks)=>{
+  if(tasks.length){
     renderTasks(tasks);
     initTaskListeners();
+  }else{
+    renderEmptyState();
+  }
 }
+taskListLink.addEventListener("click",()=>{
+  taskListElement.classList.toggle("TaskList__list--hideCompleted");
+  taskListLink.classList.toggle("TaskList__link--isActive")
+})
 
 initDataOnStartup();
